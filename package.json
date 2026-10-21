@@ -1,0 +1,16 @@
+{
+  "name": "pelican-test",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "setup": "node tools/setup.mjs",
+    "test": "node test/run.mjs",
+    "dev": "node tools/serve.mjs",
+    "shot": "node tools/shot.mjs",
+    "render": "node tools/render.mjs",
+    "contact": "node tools/contact.mjs"
+  },
+  "dependencies": { "p5": "^2.0.0", "puppeteer-core": "^23.0.0" }
+}

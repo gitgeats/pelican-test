@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang='zh-Hant'><head><meta charset='utf-8'><title>鹈鹕测试 · 预览</title>
+<style>
+ html,body{margin:0;background:#000;height:100%;overflow:hidden;font-family:sans-serif;color:#eee}
+ #stage{position:absolute;inset:0 0 56px 0;display:flex;align-items:center;justify-content:center}
+ #stage canvas{max-width:100%;max-height:100%;width:auto!important;height:auto!important;aspect-ratio:16/9}
+ #bar{position:absolute;left:0;right:0;bottom:0;height:56px;display:flex;gap:12px;align-items:center;padding:0 16px;background:#111}
+ #seek{flex:1} button{font-size:18px;width:44px}
+ body.export #bar{display:none} body.export #stage{inset:0}
+ body.export #stage canvas{max-width:none;max-height:none;width:1920px!important;height:1080px!important}
+</style></head>
+<body>
+<div id='stage'></div>
+<div id='bar'><button id='play'>▶</button><input id='seek' type='range' min='0' max='1' step='0.001' value='0'>
+<span id='time'>0.00</span><span id='label' style='min-width:200px'></span></div>
+<script src='./vendor/p5.min.js'></script>
+<script type='module'>
+import { init } from './src/main/main.js';
+if (location.search.includes('export')) document.body.classList.add('export');
+await init();
+const seek = document.getElementById('seek'), btn = document.getElementById('play');
+const timeEl = document.getElementById('time'), labelEl = document.getElementById('label');
+seek.max = window.TOTAL;
+let playing = false, t = 0, last = 0;
+const show = (v) => { t = v; window.renderAt(t); seek.value = t; timeEl.textContent = t.toFixed(2); labelEl.textContent = window.labelAt(t); };
+const tick = (now) => { if (playing) { t += (now - last) / 1000; last = now; if (t >= window.TOTAL) { t = window.TOTAL - 0.001; playing = false; btn.textContent = '▶'; } show(t); } requestAnimationFrame(tick); };
+btn.onclick = () => { playing = !playing; last = performance.now(); btn.textContent = playing ? '❚❚' : '▶'; };
+seek.oninput = () => show(parseFloat(seek.value));
+const q = new URLSearchParams(location.search).get('t'); show(q ? parseFloat(q) : 0);
+requestAnimationFrame(tick);
+</script></body></html>

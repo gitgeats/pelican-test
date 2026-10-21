@@ -1,0 +1,20 @@
+name: Contact sheet
+on:
+  push: { branches: [main] }
+  workflow_dispatch:
+jobs:
+  contact:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: node tools/setup.mjs
+      - run: npm test
+      - run: sudo apt-get install -y ffmpeg fonts-noto-cjk
+      - run: CHROME_PATH=$(which google-chrome) npm run contact
+      - run: CHROME_PATH=$(which google-chrome) npm run shot -- --t 4.7,126,130.5,136.4
+      - uses: actions/upload-artifact@v4
+        with: { name: contact-sheet, path: 'out/contact.png' }
+      - uses: actions/upload-artifact@v4
+        with: { name: shots, path: 'out/shots/*.png' }
